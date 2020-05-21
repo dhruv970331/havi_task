@@ -4,7 +4,7 @@ Havi task
 # Requirements
 1. This project uses postgres database so it is required to have a postgres db with db name havi_task.
 2. Make a virtualenv and install requirements from requirements.txt.
-3. Run command "python manage.py migarate" to create all required tables in database.
+3. Run command "python manage.py migrate" to create all required tables in database.
 4. To start application run command "python manage.py runserver" from base directory. Application will start on port 8000.
 
 # Urls
