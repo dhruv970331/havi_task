@@ -1,0 +1,79 @@
+{%extends 'base.html'%}
+{%block title%}
+Application Form
+{%endblock%}
+{%block content%}
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+
+    <!-- Header -->
+    <div class="w3-container" style="margin-top:80px" id="showcase">
+        <h1 class="w3-jumbo"><b>Application Form</b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
+    {% if success %}
+    <h4>Thank you for applying</h4>
+    {%else%}
+        <form method="POST">
+            {%csrf_token%}
+            {%for error in form.first_name.errors%}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {%endfor%}
+            {{form.first_name.label}}:{{form.first_name}}<br><br>
+
+            
+            {%for error in form.last_name.errors%}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {%endfor%}
+            {{form.last_name.label}}{{form.last_name}}<br><br>
+
+            {%for error in form.job_title.errors%}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {%endfor%}
+            {{form.job_title.label}}{{form.job_title}}<br><br>
+
+            {%for error in form.email.errors%}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {%endfor%}
+            {{form.email.label}}{{form.email}}<br><br>
+            
+            
+            {%for error in form.current_ctc.errors%}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {%endfor%}
+            {{form.current_ctc.label}}{{form.current_ctc}}<br><br>
+            
+            
+            {%for error in form.expected_ctc.errors%}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {%endfor%}
+            {{form.expected_ctc.label}}{{form.expected_ctc}}<br><br>
+            
+            
+            {%for error in form.contact.errors%}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {%endfor%}
+            {{form.contact.label}}{{form.contact}}<br><br>
+
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    {%endif%}
+
+
+    <!-- End page content -->
+</div>
+{%endblock%}

@@ -1,0 +1,128 @@
+{%extends 'base.html'%}
+
+{%block title%}Applicants List{%endblock%}
+
+{%block content%}
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+    <div class="w3-container" style="margin-top:80px" id="showcase">
+        <h4 class="w3-jumbo"><b>Applicants List</b></h4>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
+    <form>
+        <input type="text" name="q">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <br><br>
+    </form>
+    <table border="2">
+        <th style="padding: 50px;">First Name</th>
+        <th style="padding: 50px;">Last Name</th>
+        <th style="padding: 50px;">Email</th>
+        <th style="padding: 50px;">Current ctc</th>
+        <th style="padding: 50px;">Expected ctc</th>
+        <th style="padding: 50px;">Title applied</th>
+        <th style="padding: 50px;">Notes</th>
+        {%for applicant in applicants%}
+        <tr>
+            <td>{{applicant.first_name}}</td>
+            <td>{{applicant.last_name}}</td>
+            <td>{{applicant.email}}</td>
+            <td style="padding-left: 60px;">{%if applicant.current_ctc%}{{applicant.current_ctc}} LPA{%else%}-{%endif%}</td>
+            <td style="padding-left: 60px;">{{applicant.expected_ctc}} LPA</td>
+            <td>{{applicant.get_job_title_display}}</td>
+            <td>
+                {%if applicant.notes%}
+                <div class="notes-div">
+                    <p>{{applicant.notes}}</p>
+                    <a class="add-notes" href="#" style="float: right;">edit</a>
+                </div>
+                {%else%}
+                <div class="notes-div d-none">
+                    <p>{{applicant.notes}}</p>
+                    <a class="add-notes" href="#" style="float: right;">edit</a>
+                </div>
+                <a href="#" data-id={{applicant.id}} class="add-notes">click to add notes</a>
+                {%endif%}
+                <form class="save-notes-form d-none" action="{%url 'job_application:save-notes' applicant.id%}">
+                    {%csrf_token%}
+                    <textarea name="notes" class="applicant-notes" id="textarea-notes-{{applicant.id}}"
+                        data-id="{{applicant.id}}">
+                        {%if applicant.notes%}
+                        {{applicant.notes}}
+                        {%endif%}
+                    </textarea>
+                    <button type="submit" class="btn btn-primary" class="save-notes" name="save-notes">save</button>
+                </form>
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
+    {{page_obj.paginator.num_pages}}
+    {% if is_paginated %}
+    <div class="row">
+        <div class="col-md-10">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                {% endif %}
+                {% if page_obj.number|add:'-4' > 1 %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
+                {% endif %}
+                {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% elif i > page_obj.number|add:'-4' and i < page_obj.number|add:'4' %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'5' }}">&hellip;</a></li>
+                {% endif %}
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+    function updateNotes(id, td) {
+        console.log(id, td)
+    }
+
+    $(".save-notes-form").submit(function (e) {
+        e.preventDefault()
+        form = $(this)
+        csrf = "{{csrf_token}}"
+        console.log("save-form")
+        data = $(this).serialize()
+        $.post(form.attr("action"), data, function (response) {
+            if (response.success) {
+                form.addClass("d-none")
+                td = form.parents("td")
+                p = td.find("p")
+                p.html(form.find("textarea").val())
+                // p.removeClass("d-none")
+                td.find("div").removeClass("d-none")
+                form.addClass("d-none")
+            }
+        })
+        console.log(data, "6565")
+    })
+    $(".add-notes").click(function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        a = $(this)
+        td = a.parents("td").first()
+        div = td.find("div")
+        div.addClass("d-none")
+        td.find("form").removeClass("d-none")
+        a.addClass("d-none")
+    })
+</script>
+{%endblock%}
